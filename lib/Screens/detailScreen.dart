@@ -48,6 +48,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
+                                  Navigator.pop(context);
                                   Share.share(widget.veri7);
                                 },
                                 child: Row(

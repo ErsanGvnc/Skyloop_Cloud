@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:maltepe/Screens/detailScreen.dart';
+import 'package:maltepe/Screens/webScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Variables/variables.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,9 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   habercek() async {
     var gelen = await http.get(
-      Uri.parse(
-        "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=3e8768244d22445ebd4382aed8d7c5fa",
-      ),
+      Uri.parse(newsApi),
     );
     haberler = jsonDecode(gelen.body);
 
@@ -72,6 +72,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: EdgeInsets.zero,
                       child: SizedBox(),
                     ),
+                    ListTile(
+                      leading: Image.asset(
+                        "assets/images/appLogo.png",
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                        width: 50,
+                      ),
+                      title: Text("Skyloop Cloud"),
+                      onTap: () async {
+                        await launchUrl(
+                          Uri.parse(myLinkedin),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -88,9 +102,21 @@ class _HomeScreenState extends State<HomeScreen> {
           filterQuality: FilterQuality.high,
         ),
         actions: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-              "https://avatars.githubusercontent.com/u/57798484?v=4",
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Site(
+                    verilink: "https://github.com/ErsanGvnc",
+                  ),
+                ),
+              );
+            },
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(
+                "https://avatars.githubusercontent.com/u/57798484?v=4",
+              ),
             ),
           ),
           SizedBox(width: 10),
@@ -109,22 +135,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => DetailScreen(
-                            veri1: sonHaberler[index]["urlToImage"] ??
-                                sonHaberler[index]["urlToImage"],
-                            veri2: sonHaberler[index]["source"]["name"] ??
-                                sonHaberler[index]["source"]["name"],
-                            veri3: sonHaberler[index]["publishedAt"] ??
-                                sonHaberler[index]["publishedAt"],
-                            veri4: sonHaberler[index]["title"] ??
-                                sonHaberler[index]["title"],
-                            veri5: sonHaberler[index]["description"] ??
-                                sonHaberler[index]["description"],
-                            veri6: sonHaberler[index]["author"] ??
-                                sonHaberler[index]["author"],
-                            veri7: sonHaberler[index]["url"] ??
-                                sonHaberler[index]["url"],
-                            veri8: sonHaberler[index]["content"] ??
-                                sonHaberler[index]["content"],
+                            veri1: sonHaberler[index]["urlToImage"] ?? "",
+                            veri2: sonHaberler[index]["source"]["name"] ?? "",
+                            veri3: sonHaberler[index]["publishedAt"] ?? "",
+                            veri4: sonHaberler[index]["title"] ?? "",
+                            veri5: sonHaberler[index]["description"] ?? "",
+                            veri6: sonHaberler[index]["author"] ?? "",
+                            veri7: sonHaberler[index]["url"] ?? "",
+                            veri8: sonHaberler[index]["content"] ?? "",
                           ),
                         ),
                       );
@@ -140,15 +158,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                sonHaberler[index]["source"]["name"] ??
-                                    sonHaberler[index]["source"]["name"],
+                                sonHaberler[index]["source"]["name"] ?? "",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                sonHaberler[index]["publishedAt"] ??
-                                    sonHaberler[index]["publishedAt"],
+                                sonHaberler[index]["publishedAt"] ?? "",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
@@ -158,8 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            sonHaberler[index]["title"] ??
-                                sonHaberler[index]["title"],
+                            sonHaberler[index]["title"] ?? "",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -167,8 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            sonHaberler[index]["description"] ??
-                                sonHaberler[index]["description"],
+                            sonHaberler[index]["description"] ?? "",
                             style: TextStyle(
                               color: Colors.grey[700],
                             ),
@@ -178,9 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                sonHaberler[index]["author"] != null
-                                    ? sonHaberler[index]["author"]
-                                    : "",
+                                sonHaberler[index]["author"] ?? "",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
@@ -195,11 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 : SizedBox();
           },
           separatorBuilder: (context, index) {
-            return const Divider(
-              color: Colors.black,
-              indent: 10,
-              endIndent: 10,
-            );
+            return sonHaberler[index]["urlToImage"] != null
+                ? const Divider(
+                    color: Colors.black,
+                    indent: 10,
+                    endIndent: 10,
+                  )
+                : SizedBox();
           },
         ),
       ),
